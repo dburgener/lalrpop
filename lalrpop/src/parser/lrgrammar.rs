@@ -1363,6 +1363,10 @@ const ___ACTION: &[i16] = &[
 fn ___action(state: i16, integer: usize) -> i16 {
 ___ACTION[(state as usize) * 59 + integer]
 }
+fn ___next_actions(state: i16) -> &'static [i16] {
+let start = (state as usize) * 59;
+&___ACTION[start..start + 59]
+}
 const ___EOF_ACTION: &[i16] = &[
 // State 0
 0,
@@ -3154,6 +3158,11 @@ ___token_to_integer(token, core::marker::PhantomData::<(&())>)
 #[inline]
 fn action(&self, state: i16, integer: usize) -> i16 {
 ___action(state, integer)
+}
+
+#[inline]
+fn next_actions(&self, state: i16) -> &[i16] {
+___next_actions(state)
 }
 
 #[inline]
@@ -6477,7 +6486,10 @@ _priv: (),
 pub fn parse<
     'input,
     ___TOKEN: ___ToTriple<'input, >,
-    ___TOKENS: IntoIterator<Item=___TOKEN>,
+    ___TOKENS: ___lalrpop_util::state_machine::IntoLexerIterator<
+                        i16,
+                        Item=___TOKEN
+                    >,
 >(
 &self,
 text: &'input str,
