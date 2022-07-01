@@ -11,7 +11,7 @@ use super::Top;
 #[allow(unused_extern_crates)]
 extern crate lalrpop_util as ___lalrpop_util;
 #[allow(unused_imports)]
-use self::___lalrpop_util::state_machine as ___state_machine;
+use self::___lalrpop_util::state_machine::{self as ___state_machine, IntoLexerIterator as _};
 #[allow(unused_extern_crates)]
 extern crate alloc;
 
@@ -30,7 +30,7 @@ use super::super::Top;
 #[allow(unused_extern_crates)]
 extern crate lalrpop_util as ___lalrpop_util;
 #[allow(unused_imports)]
-use self::___lalrpop_util::state_machine as ___state_machine;
+use self::___lalrpop_util::state_machine::{self as ___state_machine, IntoLexerIterator as _};
 #[allow(unused_extern_crates)]
 extern crate alloc;
 use super::___ToTriple;
@@ -6487,7 +6487,7 @@ pub fn parse<
     'input,
     ___TOKEN: ___ToTriple<'input, >,
     ___TOKENS: ___lalrpop_util::state_machine::IntoLexerIterator<
-                        i16,
+                        Tok<'input>,
                         Item=___TOKEN
                     >,
 >(
@@ -6496,8 +6496,11 @@ text: &'input str,
 ___tokens0: ___TOKENS,
 ) -> Result<Top, ___lalrpop_util::ParseError<usize, Tok<'input>, tok::Error>>
 {
-let ___tokens = ___tokens0.into_iter();
-let mut ___tokens = ___tokens.map(|t| ___ToTriple::to_triple(t));
+let ___tokens = ___tokens0.into_lex_iter();
+let mut ___tokens = ___lalrpop_util::state_machine::Map(
+                    ___tokens,
+                    |t| ___ToTriple::to_triple(t),
+                );
 ___state_machine::Parser::drive(
 ___StateMachine {
 text,
