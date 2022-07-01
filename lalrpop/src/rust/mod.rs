@@ -182,7 +182,7 @@ impl<W: Write> RustWrite<W> {
         rust!(self, "#[allow(unused_imports)]");
         rust!(
             self,
-            "use self::{p}lalrpop_util::state_machine as {p}state_machine;",
+            "use self::{p}lalrpop_util::state_machine::{{self as {p}state_machine, IntoLexerIterator as _}};",
             p = prefix,
         );
         // https://doc.rust-lang.org/edition-guide/rust-2018/path-changes.html#an-exception
