@@ -197,7 +197,7 @@ impl<'codegen, 'grammar, W: Write, C> CodeGenerator<'codegen, 'grammar, W, C> {
         Ok(())
     }
 
-    pub fn start_parser_fn(&mut self) -> io::Result<()> {
+    pub fn start_parser_fn(&mut self, use_lexer_iterator: Option<&str>) -> io::Result<()> {
         let parse_error_type = self.types.parse_error_type();
 
         let (type_parameters, parameters);
@@ -220,12 +220,24 @@ impl<'codegen, 'grammar, W: Write, C> CodeGenerator<'codegen, 'grammar, W, C> {
                     "{}TOKEN: {}ToTriple<{}>",
                     self.prefix, self.prefix, user_type_parameters,
                 ),
-                format!(
-                    "{}TOKENS: IntoIterator<Item={}TOKEN>{}",
-                    self.prefix,
-                    self.prefix,
-                    if self.repeatable { " + Clone" } else { "" }
-                ),
+                if let Some(action_type) = use_lexer_iterator {
+                    format!(
+                        "{p}TOKENS: {p}lalrpop_util::state_machine::IntoLexerIterator<
+                        {action_type},
+                        Item={p}TOKEN
+                    >{maybe_clone}",
+                        p = self.prefix,
+                        action_type = action_type,
+                        maybe_clone = if self.repeatable { " + Clone" } else { "" }
+                    )
+                } else {
+                    format!(
+                        "{}TOKENS: IntoIterator<Item={}TOKEN>{}",
+                        self.prefix,
+                        self.prefix,
+                        if self.repeatable { " + Clone" } else { "" }
+                    )
+                },
             ];
             parameters = vec![format!("{}tokens0: {}TOKENS", self.prefix, self.prefix)];
         }
