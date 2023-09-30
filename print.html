@@ -1,17 +1,17 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="light" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title></title>
-        <meta name="robots" content="noindex" />
+        <meta name="robots" content="noindex">
 
 
         <!-- Custom HTML head -->
         
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
         <link rel="icon" href="favicon.svg">
         <link rel="shortcut icon" href="favicon.png">
@@ -34,7 +34,7 @@
         <!-- MathJax -->
         <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     </head>
-    <body>
+    <body class="sidebar-visible no-js">
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
@@ -64,42 +64,69 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
-            html.classList.remove('no-js')
             html.classList.remove('light')
             html.classList.add(theme);
-            html.classList.add('js');
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
         </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var html = document.querySelector('html');
+            var body = document.querySelector('body');
             var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
             } else {
                 sidebar = 'hidden';
             }
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> LALRPOP</a></li><li class="chapter-item expanded "><a href="crash_course.html"><strong aria-hidden="true">2.</strong> Crash course on parsers</a></li><li class="chapter-item expanded "><a href="quick_start_guide.html"><strong aria-hidden="true">3.</strong> Quick start guide</a></li><li class="chapter-item expanded "><a href="tutorial/index.html"><strong aria-hidden="true">4.</strong> Tutorial</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="tutorial/001_adding_lalrpop.html"><strong aria-hidden="true">4.1.</strong> Adding LALRPOP to your project</a></li><li class="chapter-item expanded "><a href="tutorial/002_paren_numbers.html"><strong aria-hidden="true">4.2.</strong> Parsing parenthesized numbers</a></li><li class="chapter-item expanded "><a href="tutorial/003_type_inference.html"><strong aria-hidden="true">4.3.</strong> Type inference</a></li><li class="chapter-item expanded "><a href="tutorial/004_full_expressions.html"><strong aria-hidden="true">4.4.</strong> Handling full expressions</a></li><li class="chapter-item expanded "><a href="tutorial/005_building_asts.html"><strong aria-hidden="true">4.5.</strong> Building ASTs</a></li><li class="chapter-item expanded "><a href="tutorial/006_macros.html"><strong aria-hidden="true">4.6.</strong> Macros</a></li><li class="chapter-item expanded "><a href="tutorial/007_fallible_actions.html"><strong aria-hidden="true">4.7.</strong> Fallible actions</a></li><li class="chapter-item expanded "><a href="tutorial/008_error_recovery.html"><strong aria-hidden="true">4.8.</strong> Error recovery</a></li><li class="chapter-item expanded "><a href="tutorial/009_state_parameter.html"><strong aria-hidden="true">4.9.</strong> Passing state parameter</a></li></ol></li><li class="chapter-item expanded "><a href="lexer_tutorial/index.html"><strong aria-hidden="true">5.</strong> Controlling the lexer</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="lexer_tutorial/001_lexer_gen.html"><strong aria-hidden="true">5.1.</strong> LALRPOP's lexer generator</a></li><li class="chapter-item expanded "><a href="lexer_tutorial/002_raw_delimited_content.html"><strong aria-hidden="true">5.2.</strong> Lexing raw delimited content</a></li><li class="chapter-item expanded "><a href="lexer_tutorial/003_writing_custom_lexer.html"><strong aria-hidden="true">5.3.</strong> Writing a custom lexer</a></li><li class="chapter-item expanded "><a href="lexer_tutorial/004_token_references.html"><strong aria-hidden="true">5.4.</strong> Using tokens with references</a></li><li class="chapter-item expanded "><a href="lexer_tutorial/005_external_lib.html"><strong aria-hidden="true">5.5.</strong> Using an external library</a></li></ol></li><li class="chapter-item expanded "><a href="advanced_setup.html"><strong aria-hidden="true">6.</strong> Advanced setup</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="generate_in_source.html"><strong aria-hidden="true">6.1.</strong> Generate in source tree</a></li><li class="spacer"></li></ol></li><li class="chapter-item expanded "><a href="misc/contributors.html">Contributors</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> LALRPOP</a></li><li class="chapter-item expanded "><a href="crash_course.html"><strong aria-hidden="true">2.</strong> Crash course on parsers</a></li><li class="chapter-item expanded "><a href="quick_start_guide.html"><strong aria-hidden="true">3.</strong> Quick start guide</a></li><li class="chapter-item expanded "><a href="tutorial/index.html"><strong aria-hidden="true">4.</strong> Tutorial</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="tutorial/001_adding_lalrpop.html"><strong aria-hidden="true">4.1.</strong> Adding LALRPOP to your project</a></li><li class="chapter-item expanded "><a href="tutorial/002_paren_numbers.html"><strong aria-hidden="true">4.2.</strong> Parsing parenthesized numbers</a></li><li class="chapter-item expanded "><a href="tutorial/003_type_inference.html"><strong aria-hidden="true">4.3.</strong> Type inference</a></li><li class="chapter-item expanded "><a href="tutorial/004_full_expressions.html"><strong aria-hidden="true">4.4.</strong> Handling full expressions</a></li><li class="chapter-item expanded "><a href="tutorial/005_building_asts.html"><strong aria-hidden="true">4.5.</strong> Building ASTs</a></li><li class="chapter-item expanded "><a href="tutorial/006_macros.html"><strong aria-hidden="true">4.6.</strong> Macros</a></li><li class="chapter-item expanded "><a href="tutorial/007_fallible_actions.html"><strong aria-hidden="true">4.7.</strong> Fallible actions</a></li><li class="chapter-item expanded "><a href="tutorial/008_error_recovery.html"><strong aria-hidden="true">4.8.</strong> Error recovery</a></li><li class="chapter-item expanded "><a href="tutorial/009_state_parameter.html"><strong aria-hidden="true">4.9.</strong> Passing state parameter</a></li></ol></li><li class="chapter-item expanded "><a href="lexer_tutorial/index.html"><strong aria-hidden="true">5.</strong> Controlling the lexer</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="lexer_tutorial/001_lexer_gen.html"><strong aria-hidden="true">5.1.</strong> LALRPOP's lexer generator</a></li><li class="chapter-item expanded "><a href="lexer_tutorial/002_raw_delimited_content.html"><strong aria-hidden="true">5.2.</strong> Lexing raw delimited content</a></li><li class="chapter-item expanded "><a href="lexer_tutorial/003_writing_custom_lexer.html"><strong aria-hidden="true">5.3.</strong> Writing a custom lexer</a></li><li class="chapter-item expanded "><a href="lexer_tutorial/004_token_references.html"><strong aria-hidden="true">5.4.</strong> Using tokens with references</a></li><li class="chapter-item expanded "><a href="lexer_tutorial/005_external_lib.html"><strong aria-hidden="true">5.5.</strong> Using an external library</a></li></ol></li><li class="chapter-item expanded "><a href="advanced_setup.html"><strong aria-hidden="true">6.</strong> Advanced setup</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="generate_in_source.html"><strong aria-hidden="true">6.1.</strong> Generate in source tree</a></li><li class="chapter-item expanded "><a href="conditional-compilation.html"><strong aria-hidden="true">6.2.</strong> Conditional compilation</a></li><li class="spacer"></li></ol></li><li class="chapter-item expanded "><a href="misc/contributors.html">Contributors</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
@@ -219,26 +246,20 @@ to the syntax of LALRPOP files and so forth.</p>
 <p>But if you've done this before, or you're just the impatient sort,
 here is a quick 'cheat sheet' for setting up your project.  First, add
 the following lines to your <code>Cargo.toml</code>:</p>
-<pre><code class="language-toml">[package]
-...
-build = &quot;build.rs&quot; # LALRPOP preprocessing
-
-# The generated code depends on lalrpop-util.
+<pre><code class="language-toml"># The generated code depends on lalrpop-util.
 [dependencies]
-lalrpop-util = &quot;0.19.10&quot;
+lalrpop-util = &quot;0.20.0&quot;
 
 # Add a build-time dependency on the lalrpop library:
 [build-dependencies]
-lalrpop = &quot;0.19.10&quot;
+lalrpop = &quot;0.20.0&quot;
 # If you are supplying your own external lexer you can disable default features so that the
 # built-in lexer feature is not included
 # lalrpop = { version = &quot;0.19.1&quot;, default-features = false }
 </code></pre>
 <p>Next create a <a href="https://doc.rust-lang.org/cargo/reference/build-scripts.html"><code>build.rs</code></a> file
 that looks like:</p>
-<pre><pre class="playground"><code class="language-rust">extern crate lalrpop;
-
-fn main() {
+<pre><pre class="playground"><code class="language-rust">fn main() {
     lalrpop::process_root().unwrap();
 }</code></pre></pre>
 <p>(If you already have a <code>build.rs</code> file, you should be able to just
@@ -302,12 +323,13 @@ look something like:</p>
 name = &quot;calculator&quot;
 version = &quot;0.1.0&quot;
 authors = [&quot;Niko Matsakis &lt;niko@alum.mit.edu&gt;&quot;]
+edition = &quot;2021&quot;
 
 [build-dependencies] # &lt;-- We added this and everything after!
-lalrpop = &quot;0.19.10&quot;
+lalrpop = &quot;0.20.0&quot;
 
 [dependencies]
-lalrpop-util = &quot;0.19.10&quot;
+lalrpop-util = { version = &quot;0.20.0&quot;, features = [&quot;lexer&quot;] }
 </code></pre>
 <p>Cargo can run <a href="https://doc.rust-lang.org/cargo/reference/build-scripts.html">build scripts</a> as a pre-processing step,
 named <code>build.rs</code> by default. The <code>[build-dependencies]</code>
@@ -315,18 +337,11 @@ section specifies the dependencies for build scripts -- in this
 case, just LALRPOP.</p>
 <p>The <code>[dependencies]</code> section describes the dependencies that LALRPOP
 needs at runtime. All LALRPOP parsers require at least the
-<code>lalrpop-util</code> crate. In addition, if you don't want to write the
-lexer by hand, you need to add a dependency on the regex crate. (If
-you don't know what a lexer is, don't worry, it's not important just
-now, though we will cover it in <a href="tutorial/002_paren_numbers.html">the next section</a>; if you <em>do</em>
-know what a lexer is, and you want to know how to write a lexer by
-hand and use it with LALRPOP, then check out the <a href="tutorial/../lexer_tutorial/index.html">lexer tutorial</a>.)</p>
+<code>lalrpop-util</code> crate.</p>
 <p>Next we have to add <code>build.rs</code> itself. For those unfamiliar with <a href="https://doc.rust-lang.org/cargo/reference/build-scripts.html">this feature</a>, the <code>build.rs</code> file
 should be placed next to your <code>Cargo.toml</code> file and not inside the <code>src</code> folder with the rest of
 your Rust code. This should just look like the following:</p>
-<pre><pre class="playground"><code class="language-rust">extern crate lalrpop;
-
-fn main() {
+<pre><pre class="playground"><code class="language-rust">fn main() {
     lalrpop::process_root().unwrap();
 }</code></pre></pre>
 <p>The function <code>process_root</code> processes your <code>src</code> directory, converting
@@ -416,12 +431,12 @@ number; so <code>22</code> is a term. The second alternative is <code>&quot;(&qu
 <p><strong>Invoking the parser.</strong> OK, so we wrote our parser, how do we use it?
 For every nonterminal <code>Foo</code> declared as <code>pub</code>, LALRPOP will export a
 <code>FooParser</code> struct with a <code>parse</code> method that you can call to parse a
-string as that nonterminal. Here is a simple test that we've added to 
+string as that nonterminal. Here is a simple test that we've added to
 our <a href="https://github.com/lalrpop/lalrpop/blob/master/doc/calculator/src/main.rs"><code>main.rs</code></a> file which uses this struct to test our <code>Term</code>
 nonterminal:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>#[macro_use] extern crate lalrpop_util;
+</span>use lalrpop_util::lalrpop_mod;
 
 lalrpop_mod!(pub calculator1); // synthesized by LALRPOP
 
@@ -760,7 +775,7 @@ FactorOp: Opcode = {
 <p>And, of course, we have to add some tests to <a href="https://github.com/lalrpop/lalrpop/blob/master/doc/calculator/src/main.rs">main.rs file</a>:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>#[macro_use] extern crate lalrpop_util;
+</span>use lalrpop_util::lalrpop_mod;
 
 lalrpop_mod!(pub calculator5);
 
@@ -821,7 +836,7 @@ source as <a href="https://github.com/lalrpop/lalrpop/blob/master/doc/calculator
 handle the errors:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>#[macro_use] extern crate lalrpop_util;
+</span>use lalrpop_util::lalrpop_mod;
 
 lalrpop_mod!(pub calculator6);
 
@@ -882,7 +897,7 @@ extern {
 <p>And finally we can see if it works:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>#[macro_use] extern crate lalrpop_util;
+</span>use lalrpop_util::lalrpop_mod;
 
 lalrpop_mod!(pub calculator6b);
 
@@ -1002,6 +1017,7 @@ fn calculator8() {
 }
 <span class="boring">}</span></code></pre></pre>
 <p>For a more practical example with a custom tree structure, check out <a href="https://github.com/lalrpop/lalrpop/blob/master/lalrpop-test/src/expr_arena.lalrpop">this parser</a> using <a href="https://github.com/lalrpop/lalrpop/blob/master/lalrpop-test/src/expr_arena_ast.rs">this structure</a> to build the AST.</p>
+<p>Note: The state parameter must implement the Copy trait.  For types that don't implement Copy, you should pass them as a reference instead.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="fine-control-over-the-lexer"><a class="header" href="#fine-control-over-the-lexer">Fine control over the lexer</a></h1>
 <p>This part is about controlling the inner workings of LALRPOP's built-in lexer generator and using your own hand written parser.</p>
 <ul>
@@ -1288,6 +1304,21 @@ To this end <code>ignore patterns</code> can be specified.</p>
     r&quot;/\*[^*]*\*+(?:[^/*][^*]*\*+)*/&quot; =&gt; { },  // Skip `/* comments */`
 }
 </code></pre>
+<h4 id="unicode-compatibility"><a class="header" href="#unicode-compatibility">Unicode compatibility</a></h4>
+<p>LALRPOP is capable of lexing tokens that match the full unicode character set,
+or those that just match ASCII.  If you need unicode matching, you should
+enable <code>features = [ &quot;unicode&quot; ]</code> in your Cargo.toml.  Because lexing unicode
+requires loading the full unicode character set, enabling this feature will
+increase binary size, so you may wish to avoid it if you do not need unicode
+support.</p>
+<p>It's important to note that <a href="https://docs.rs/regex/latest/regex/#perl-character-classes-unicode-friendly">certain character classes</a> from perl
+regex extensions are &quot;unicode friendly&quot;, and require unicode support.  For
+example, &quot;\s&quot; matches unicode whitespace characters, not just ASCII ones, and
+likewise &quot;\d&quot; matches unicode digits (such as numerals in non-latin character
+sets).  If you use those patterns in your lexer, you will require unicode.</p>
+<p>You may wish to match only the ASCII subset of these characters, in which case,
+you can use the ASCII only character classes described <a href="https://docs.rs/regex/latest/regex/#ascii-character-classes">here</a> as
+substitutes and avoid adding unicode dependencies.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="lexing-raw-delimited-content"><a class="header" href="#lexing-raw-delimited-content">Lexing raw delimited content</a></h1>
 <p>Our calculator example operated on numbers and arithmetic operators.
 There is no overlap between the characters for numeric digits (<code>0</code>, <code>1</code>, ...),
@@ -2057,9 +2088,7 @@ println!(&quot;{:?}&quot;, ast);
 <div style="break-before: page; page-break-before: always;"></div><h3 id="customizing-the-build-process"><a class="header" href="#customizing-the-build-process">Customizing the Build Process</a></h3>
 <p>When you setup LALRPOP, you create a <code>build.rs</code> file that looks something
 like this:</p>
-<pre><pre class="playground"><code class="language-rust">extern crate lalrpop;
-
-fn main() {
+<pre><pre class="playground"><code class="language-rust">fn main() {
     lalrpop::process_root().unwrap();
 }</code></pre></pre>
 <p>This <code>process_root()</code> call simply applies the default configuration:
@@ -2069,13 +2098,20 @@ has actually changed. But you can also use the
 <a href="https://docs.rs/lalrpop/*/lalrpop/struct.Configuration.html"><code>Configuration</code></a> struct to get more detailed control.</p>
 <p>For example, to <strong>force</strong> the use of colors in the output (ignoring
 the TTY settings), you might make your <code>build.rs</code> file look like so:</p>
-<pre><pre class="playground"><code class="language-rust">extern crate lalrpop;
-
-fn main() {
+<pre><pre class="playground"><code class="language-rust">fn main() {
     lalrpop::Configuration::new()
         .always_use_colors()
         .process_current_dir();
 }</code></pre></pre>
+<h4 id="rerun-directives"><a class="header" href="#rerun-directives">Rerun Directives</a></h4>
+<p>Cargo will rerun the build script on each compilation even if the lalrpop file has not changed.
+To disable this behavior, use the <code>emit_rerun_directives</code> function when setting up your lalrpop <code>Configuration</code>.</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    lalrpop::Configuration::new()
+        .emit_rerun_directives(true)
+        .process_current_dir();
+}</code></pre></pre>
+<p>By default, this is set to false in case other parts of the build script or compilation code expects <code>build.rs</code> to be run unconditionally.</p>
 <h3 id="using-the-legacy-lalr-parser"><a class="header" href="#using-the-legacy-lalr-parser">Using the Legacy LALR Parser</a></h3>
 <p>By default, LALRPOP uses the <a href="https://github.com/lalrpop/lalrpop/blob/master/lalrpop/src/lr1/lane_table/README.md">lane table</a>
 algorithm which is LR(1) but creates much smaller tables. There is no longer
@@ -2090,15 +2126,22 @@ of the input files. Since 0.16, files are generated in the Cargo's
 <strong>output directory</strong>.</p>
 <p>If you want to keep the previous behaviour, you can use <code>generate_in_source_tree</code>
 in your configuration:</p>
-<pre><pre class="playground"><code class="language-rust">extern crate lalrpop;
-
-fn main() {
+<pre><pre class="playground"><code class="language-rust">fn main() {
     lalrpop::Configuration::new()
         .generate_in_source_tree()
-        .process();
+        .process().unwrap();
 }</code></pre></pre>
 <p>For each <code>foo.lalrpop</code> file you can simply have <code>mod foo;</code> in your source tree.
 The <code>lalrpop_mod</code> macro is not useful in this mode.</p>
+<div style="break-before: page; page-break-before: always;"></div><p>LALRPOP support conditional compilation of public non-terminal declarations via <code>#[cfg(feature = &quot;FEATURE&quot;)]</code> attributes.
+If run in a build script LALRPOP will automatically pickup the features from <code>cargo</code> and use those. Alternatively an explicit set of features can be set using the <code>Configuration</code> type.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[cfg(feature = &quot;FEATURE&quot;)]
+pub MyRule : () = {
+    ...
+};
+<span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="contributors"><a class="header" href="#contributors">Contributors</a></h1>
 <p><strong>Here is a list of the contributors who have helped improving
 LALRPOP.</strong> This list may be incomplete. The &quot;canonical list&quot; can be
