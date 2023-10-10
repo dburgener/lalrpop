@@ -241,3 +241,34 @@ fn same_literal_twice() {
         r#"                                         ~~~~~~~~~~~~~~~ "#,
     );
 }
+
+#[test]
+fn whitespace_rewrite() {
+    let grammar = r#"
+        grammar;
+        pub nonterm: String = {
+            r"\w+" => "word",
+            r"\s+" => "string"
+        }
+        "#;
+
+    assert!(validate_grammar(grammar).is_ok());
+
+    #[cfg(not(feature = "unicode"))]
+    check_intern_token(
+        grammar,
+        vec![
+            ("x", r##"Some((r#"(?-u\\w)+"#, "x"))"##),
+            ("\n", r##"Some((r#"(?-u\\s)+"#, "\n"))"##),
+        ],
+    );
+
+    #[cfg(feature = "unicode")]
+    check_intern_token(
+        grammar,
+        vec![
+            ("x", r##"Some((r#"\\w+"#, "x"))"##),
+            ("\n", r##"Some((r#"\\s+"#, "\n"))"##),
+        ],
+    );
+}

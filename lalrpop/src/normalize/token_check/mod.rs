@@ -334,6 +334,10 @@ fn construct(grammar: &mut Grammar, match_block: MatchBlock) -> NormResult<()> {
                 regexs.push(re::parse_literal(s));
             }
             TerminalLiteral::Regex(ref s) => {
+                // Turn unicode-friendly regex characters into ascii-only versions to avoid
+                // unneeded unicode dependencies
+                #[cfg(not(feature = "unicode"))]
+                let s = &convert_to_ascii_regex(s);
                 match re::parse_regex(s) {
                     Ok(regex) => regexs.push(regex),
                     Err(error) => {
@@ -423,4 +427,20 @@ fn construct(grammar: &mut Grammar, match_block: MatchBlock) -> NormResult<()> {
     grammar.parameters.push(parameter);
 
     Ok(())
+}
+
+//The regex library considers the following regexes to be "unicode friendly":
+// \d, \D, \s, \S, \w, \W.  This means they match unicode characters, and require unicode support.
+// If we are compiled without the unicode feature, rewrite them to avoid needing unicode, and treat
+// them as the ASCII equivalents
+#[cfg(not(feature = "unicode"))]
+fn convert_to_ascii_regex(regex: &str) -> String {
+    // Replacing one by one is redundant.  It might be faster to use something like https://docs.rs/aho-corasick/latest/aho_corasick/struct.AhoCorasick.html#method.replace_all but I'm not sure whether the dependency is worth it
+    regex
+        .replace(r"\d", r"(?-u\d)")
+        .replace(r"\D", r"(?-u\D)")
+        .replace(r"\s", r"(?-u\s)")
+        .replace(r"\S", r"(?-u\S)")
+        .replace(r"\w", r"(?-u\w)")
+        .replace(r"\W", r"(?-u\W)")
 }
