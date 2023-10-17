@@ -122,7 +122,7 @@ impl<'input, 'builder, E> Iterator for Matcher<'input, 'builder, E> {
                     }))
                 }
             };
-            println!("Found a match");
+            println!("\tFound a match");
             let index = (0..self.dfa.match_len(&self.cache, match_state))
                 .map(|n| {
                     self.dfa
@@ -132,13 +132,17 @@ impl<'input, 'builder, E> Iterator for Matcher<'input, 'builder, E> {
                 .max()
                 .unwrap();
 
+            println!("\tindex={}", index);
+
             let result = &text[..longest_match];
             let remaining = &text[longest_match..];
             let end_offset = start_offset + longest_match;
             self.text = remaining;
             self.consumed = end_offset;
 
+            println!("\t\tskip vec: {}", skip_vec);
             if self.skip_vec[index] {
+                println!("\tContinuing");
                 continue;
             }
 
