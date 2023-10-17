@@ -140,7 +140,7 @@ impl<'input, 'builder, E> Iterator for Matcher<'input, 'builder, E> {
             self.text = remaining;
             self.consumed = end_offset;
 
-            println!("\t\tskip vec: {}", skip_vec);
+            println!("\t\tskip vec: {:?}", self.skip_vec);
             if self.skip_vec[index] {
                 println!("\tContinuing");
                 continue;
