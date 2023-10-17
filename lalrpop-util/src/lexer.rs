@@ -83,8 +83,10 @@ impl<'input, 'builder, E> Iterator for Matcher<'input, 'builder, E> {
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
+            println!("In loop");
             let text = self.text;
             let start_offset = self.consumed;
+            println!("\t{}", text);
             if text.is_empty() {
                 self.consumed = start_offset;
                 return None;
@@ -92,12 +94,15 @@ impl<'input, 'builder, E> Iterator for Matcher<'input, 'builder, E> {
 
             let mut match_ = None;
             'search: {
+                println!("\tsearch loop");
                 let mut state = self.start;
                 for (i, byte) in text.bytes().enumerate() {
                     state = self.dfa.next_state(&mut self.cache, state, byte).unwrap();
                     if state.is_match() {
+                        println!("\t\tis match");
                         match_ = Some((state, i));
                     } else if state.is_dead() {
+                        println!("\t\tis dead");
                         break 'search;
                     }
                 }
@@ -107,14 +112,17 @@ impl<'input, 'builder, E> Iterator for Matcher<'input, 'builder, E> {
                 }
             }
 
+            println!("\tChecking for a match");
             let (match_state, longest_match) = match match_ {
                 Some(match_) => match_,
                 None => {
+                    println!("\tinvalid token");
                     return Some(Err(ParseError::InvalidToken {
                         location: start_offset,
                     }))
                 }
             };
+            println!("Found a match");
             let index = (0..self.dfa.match_len(&self.cache, match_state))
                 .map(|n| {
                     self.dfa
