@@ -12,7 +12,7 @@ match {
     r"[0-9]+",
 
     // Skip whitespace and comments
-    r"\s*" => { },
+    r"[[:space:]]+" => { },
     r"//[^\n\r]*[\n\r]*" => { }, // `// comment`
     r"/\*([^\*]*\*+[^\*/])*([^\*]*\*+|[^\*])*\*/" => { }, // `/* comment */`
 }

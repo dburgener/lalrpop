@@ -328,7 +328,7 @@ To this end `ignore patterns` can be specified.
 
 ```
 match {
-    r"\s*" => { }, // The default whitespace skipping is disabled if an `ignore pattern` is specified
+    r"{{:space:]]+" => { }, // The default whitespace skipping is disabled if an `ignore pattern` is specified
     r"//[^\n\r]*[\n\r]*" => { }, // Skip `// comments`
     r"/\*[^*]*\*+(?:[^/*][^*]*\*+)*/" => { },  // Skip `/* comments */`
 }
