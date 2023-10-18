@@ -34,8 +34,11 @@ edition = "2021"
 lalrpop = "0.20.0"
 
 [dependencies]
-lalrpop-util = { version = "0.20.0", features = ["lexer", "unicode"] }
+lalrpop-util = { version = "0.20.0", features = ["lexer"] }
 ```
+
+Note that if you need unicode support, you should also add "unicode" to the
+list of features.
 
 Cargo can run [build scripts] as a pre-processing step,
 named `build.rs` by default. The `[build-dependencies]`
