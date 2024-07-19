@@ -1,5 +1,6 @@
 [workspace]
 members = [
+        "lalrpop",
         "doc/calculator",
         "doc/nobol",
         "doc/pascal/lalrpop",
@@ -8,7 +9,7 @@ members = [
         "doc/lexer-modes",
         "lalrpop-test",
         "lalrpop-util",
-        "lalrpop",
+	"fuzz",
 ]
 resolver = "2"
 
