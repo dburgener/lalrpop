@@ -14,6 +14,7 @@ impl<'trace, 'grammar> Tracer<'trace, 'grammar> {
         item: Lr0Item<'grammar>,
     ) -> TraceGraph<'grammar> {
         self.trace_reduce_item(item_state, item);
+        println!("{:#?}", self.trace_graph);
         self.trace_graph
     }
 
@@ -64,6 +65,7 @@ impl<'trace, 'grammar> Tracer<'trace, 'grammar> {
         if !self.visited_set.insert((item_state, nonterminal.clone())) {
             return;
         }
+        println!("{:#?}", self.states[item_state.0]);
         for pred_item in self.states[item_state.0]
             .items
             .vec
@@ -81,7 +83,8 @@ impl<'trace, 'grammar> Tracer<'trace, 'grammar> {
             let symbol_sets = pred_item.symbol_sets();
 
             let first_suffix = self.first_sets.first0(symbol_sets.suffix);
-            let continue_tracing = first_suffix.contains_eof();
+            let continue_tracing = first_suffix.contains_eof() && first_suffix.len() > 1;
+            println!("{:#?}", first_suffix);
 
             if !continue_tracing {
                 // Add an edge
