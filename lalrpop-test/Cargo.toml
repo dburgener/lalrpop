@@ -18,3 +18,17 @@ diff.workspace = true
 [dependencies.lalrpop-util]
 path = "../lalrpop-util"
 features = ["lexer", "unicode"]
+
+[features]
+default = ["test-set"]
+test-set = []
+
+[dev-dependencies]
+criterion = "0.5"
+
+[dev-dependencies.lalrpop]
+path = "../lalrpop"
+
+[[bench]]
+name = "lalrpop_benchmark"
+harness = false
