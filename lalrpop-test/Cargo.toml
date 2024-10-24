@@ -19,10 +19,6 @@ diff.workspace = true
 path = "../lalrpop-util"
 features = ["lexer", "unicode"]
 
-[features]
-default = ["test-set"]
-test-set = []
-
 [dev-dependencies]
 criterion = "0.5"
 
