@@ -441,15 +441,20 @@ impl Iterator for FilteredPathEnumerator<'_, '_> {
     type Item = Example;
 
     fn next(&mut self) -> Option<Example> {
+        println!("next");
         while self.base.found_trace() {
+            println!("found trace");
             let firsts = self.base.first0(self.first_sets);
+            println!("\t{:?}", firsts);
             if firsts.is_intersecting(&self.lookahead) {
                 let example = self.base.example();
                 self.base.advance();
+                println!("returning {:?}", example);
                 return Some(example);
             }
             self.base.advance();
         }
+        println!("returning None");
         None
     }
 }

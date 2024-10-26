@@ -54,6 +54,7 @@ impl<'grammar> Tracer<'_, 'grammar> {
             self.trace_epsilon_edges(pred_state, &item.production.nonterminal);
         }
 
+        println!("shift graph: {:?}", self.trace_graph);
         self.trace_graph
     }
 
@@ -69,12 +70,23 @@ impl<'grammar> Tracer<'_, 'grammar> {
     //     Z = ...p (*) Y ...
     //
     // So search for items like Z.
-    fn trace_epsilon_edges(&mut self, item_state: StateIndex, nonterminal: &NonterminalString) // "Y"
+    fn trace_epsilon_edges(
+        &mut self,
+        item_state: StateIndex,
+        nonterminal: &NonterminalString,
+    ) -> bool // "Y"
     {
+        println!("tee");
+        let mut pred_existed = false;
         if self.visited_set.insert((item_state, nonterminal.clone())) {
+            println!("\tinserted");
             for pred_item in self.states[item_state.0].items.vec.iter() {
+                println!("\t\t{:?}", pred_item);
                 if pred_item.can_shift_nonterminal(nonterminal) {
+                    pred_existed = true;
+                    println!("\t\t{}", pred_item.index);
                     if pred_item.index > 0 {
+                        println!("\t\t\titem");
                         // Add an edge:
                         //
                         //     [Z = ...p (*) Y ...s] -(...p,Y,...s)-> [Y]
@@ -84,6 +96,7 @@ impl<'grammar> Tracer<'_, 'grammar> {
                             pred_item.symbol_sets(),
                         );
                     } else {
+                        println!("\t\t\tnonterminal");
                         // Trace back any incoming edges to [Z = ...p (*) Y ...].
                         let pred_nonterminal = &pred_item.production.nonterminal;
                         self.trace_graph.add_edge(
@@ -91,10 +104,21 @@ impl<'grammar> Tracer<'_, 'grammar> {
                             nonterminal.clone(),
                             pred_item.symbol_sets(),
                         );
-                        self.trace_epsilon_edges(item_state, pred_nonterminal);
+                        if !self.trace_epsilon_edges(item_state, pred_nonterminal) {
+                            // This was the start state (no predecessors)
+                            // We prefer finding better edges, but maybe this will be all we find, so insert it
+                            self.trace_graph.add_edge(
+                                pred_item,
+                                nonterminal.clone(),
+                                pred_item.symbol_sets(),
+                            );
+                        }
                     }
+                } else {
+                    println!("{:?} couldn't shift nonterminal", pred_item);
                 }
             }
         }
+        pred_existed
     }
 }

@@ -14,6 +14,7 @@ impl<'grammar> Tracer<'_, 'grammar> {
         item: Lr0Item<'grammar>,
     ) -> TraceGraph<'grammar> {
         self.trace_reduce_item(item_state, item);
+        println!("{:?}", self.trace_graph);
         self.trace_graph
     }
 
@@ -42,6 +43,7 @@ impl<'grammar> Tracer<'_, 'grammar> {
         //     X = (*) ...p
         let pred_states = self.state_graph.trace_back(item_state, item.prefix());
 
+        println!("{:?}", pred_states);
         // Add in edges from [X] to all the places [X] can be consumed.
         for pred_state in pred_states {
             self.trace_reduce_from_state(pred_state, nonterminal);
@@ -70,6 +72,7 @@ impl<'grammar> Tracer<'_, 'grammar> {
             .iter()
             .filter(|i| i.can_shift_nonterminal(nonterminal))
         {
+            println!("\tchecking {:?}", pred_item);
             // Found a state:
             //
             //     Z = ...p (*) Y ...s
@@ -84,6 +87,7 @@ impl<'grammar> Tracer<'_, 'grammar> {
             let continue_tracing = first_suffix.contains_eof();
 
             if !continue_tracing {
+                println!("\t\tadding edge");
                 // Add an edge
                 //
                 //    [Z = ...p (*) Y ...s] -(...p,Y,...s)-> [Y]
@@ -92,6 +96,7 @@ impl<'grammar> Tracer<'_, 'grammar> {
                 self.trace_graph
                     .add_edge(pred_item.to_lr0(), nonterminal.clone(), symbol_sets);
             } else {
+                println!("\t\tcontinuing");
                 // Add an edge
                 //
                 //    [Z] -{..p}-> [Y]

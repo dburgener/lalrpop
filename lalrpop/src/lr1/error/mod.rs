@@ -538,6 +538,9 @@ impl<'cx, 'grammar> ErrorReportingCx<'cx, 'grammar> {
         action_examples.sort_by(|e, f| e.symbols.len().cmp(&f.symbols.len()));
         reduce_examples.sort_by(|e, f| e.symbols.len().cmp(&f.symbols.len()));
 
+        println!("{:?}", action_examples);
+        println!("{:?}", reduce_examples);
+
         // This really shouldn't happen, but if we've failed to come
         // up with examples, then report a "naive" error.
         if action_examples.is_empty() || reduce_examples.is_empty() {
