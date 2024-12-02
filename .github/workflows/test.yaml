@@ -37,10 +37,10 @@ jobs:
         if: matrix.cargo-update
         run: cargo update
       - name: Run tests
-        if: ${{ matrix.rust }} == $MSRV
+        if: ${{ matrix.rust }} == "$MSRV"
         run: ./tools/ci.sh lexer
       - name: Run tests
-        if: ${{ matrix.rust }} != $MSRV
+        if: ${{ matrix.rust }} != "$MSRV"
         run: ./tools/ci.sh
   lint:
     runs-on: ubuntu-latest
