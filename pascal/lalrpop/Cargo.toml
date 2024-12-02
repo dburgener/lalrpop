@@ -3,14 +3,15 @@ name = "pascal"
 version = "0.11.0"
 authors = ["Niko Matsakis <niko@alum.mit.edu>"]
 edition = "2021"
+publish = false
 
 [build-dependencies]
-lalrpop = { version = "0.20.2", path = "../../../lalrpop" }
+lalrpop = { version = "0.22.0", path = "../../../lalrpop" }
 
 [dependencies]
 pico-args = "0.5"
 
 [dependencies.lalrpop-util]
-version = "0.20.2"
+version = "0.22.0"
 path = "../../../lalrpop-util"
 features = ["lexer"]
