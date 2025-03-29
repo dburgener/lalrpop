@@ -29,8 +29,10 @@ jobs:
         include:
           - rust: stable
             cargo-update: false
+            os: ubuntu-latest
           - rust: $MSRV
             cargo-update: false
+            os: ubuntu-latest
           - rust: stable
             cargo-update: true
             os: windows-latest
