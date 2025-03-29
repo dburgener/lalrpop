@@ -15,7 +15,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         rust:
@@ -24,11 +24,18 @@ jobs:
           - nightly
         cargo-update:
           - true
+        os:
+          - ubuntu-latest
         include:
           - rust: stable
             cargo-update: false
+            os: ubuntu-latest
           - rust: $MSRV
             cargo-update: false
+            os: ubuntu-latest
+          - rust: stable
+            cargo-update: true
+            os: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@master
@@ -38,7 +45,7 @@ jobs:
         if: matrix.cargo-update
         run: cargo update
       - name: Run tests
-        run: ./tools/ci.sh
+        run: bash ./tools/ci.sh
   lint:
     runs-on: ubuntu-latest
     steps:
