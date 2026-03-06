@@ -34,21 +34,34 @@
         <!-- MathJax -->
         <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-        <!-- Provide site root to javascript -->
+        <!-- Provide site root and default themes to javascript -->
         <script>
-            var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc.js"></script>
     </head>
     <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
     <div id="body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
-                var theme = localStorage.getItem('mdbook-theme');
-                var sidebar = localStorage.getItem('mdbook-sidebar');
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
 
                 if (theme.startsWith('"') && theme.endsWith('"')) {
                     localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
@@ -62,7 +75,8 @@
 
         <!-- Set the theme before any content is loaded, prevents flash -->
         <script>
-            var theme;
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
@@ -75,17 +89,20 @@
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var sidebar = null;
-            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
             } else {
                 sidebar = 'hidden';
+                sidebar_toggle.checked = false;
             }
-            sidebar_toggle.checked = sidebar === 'visible';
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
@@ -112,13 +129,14 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
                     </div>
@@ -135,7 +153,12 @@
 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -230,15 +253,24 @@ here is a quick 'cheat sheet' for setting up your project. First, add
 the following lines to your <code>Cargo.toml</code>:</p>
 <pre><code class="language-toml"># The generated code depends on lalrpop-util.
 [dependencies]
-lalrpop-util = "0.22.1"
+lalrpop-util = "0.23.0"
 
 # Add a build-time dependency on the lalrpop library:
 [build-dependencies]
-lalrpop = "0.22.1"
+lalrpop = "0.23.0"
 # If you are supplying your own external lexer you can disable default features so that the
 # built-in lexer feature is not included
-# lalrpop = { version = "0.22.1", default-features = false }
+# [dependencies]
+# lalrpop-util = { version = "0.23.0", default-features = false }
+#
+# [build-dependencies]
+# lalrpop = { version = "0.23.0", default-features = false }
 </code></pre>
+<p>It's important to note that your version and features for <code>lalrpop</code> and
+<code>lalrpop-util</code> should always remain in sync.  Using different major or minor
+version levels for <code>lalrpop</code> and <code>lalrpop-util</code> is not supported.  Using
+different patch version levels should work in theory, but is challenging to
+test and therefore prone to breakage.</p>
 <p>Next create a <a href="https://doc.rust-lang.org/cargo/reference/build-scripts.html"><code>build.rs</code></a>
 file that looks like:</p>
 <pre><pre class="playground"><code class="language-rust">fn main() {
@@ -294,6 +326,7 @@ functionality, use this table to jump to the right section.</p>
 <tr><td>extern_location</td><td><code>type Location = MyLoc;</code></td><td>sets the type to for locations instead of <code>usize</code></td><td><a href="lexer_tutorial/003_writing_custom_lexer.html">Writing a custom lexer</a></td></tr>
 <tr><td>extern_tok</td><td><code>enum MyToken { }</code></td><td>declares the type of lexer tokens to be consumed by the generated parser</td><td><a href="lexer_tutorial/004_token_references.html">Using tokens with references</a></td></tr>
 <tr><td>auto_parameters</td><td><code>&lt;&gt;</code></td><td>refers to all the parameters of the non-terminal as a tuple</td><td><a href="tutorial/003_type_inference.html">Type inference</a></td></tr>
+<tr><td>tuple_parameters</td><td><code>&lt;(a, b, c):Foo&gt;</code></td><td>unwraps tuple returns of non-terminal to parameters</td><td><a href="tutorial/003_type_inference.html">Type inference</a></td></tr>
 <tr><td>conditional actions</td><td><code>Expr&lt;I&gt; = { ... , &lt;T&gt; if I == "a" =&gt; (), ...}</code></td><td>Conditional definition of a macro's alternative</td><td><a href="tutorial/index.html">index pointer</a></td></tr>
 <tr><td>precedence</td><td><code>#[precedence(level="0")]</code></td><td>creates a hierarchy to parser actions for which ones should be applied first</td><td><a href="tutorial/004_full_expressions.html">Handling full expressions</a></td></tr>
 </tbody></table>
@@ -347,10 +380,10 @@ look something like:</p>
 name = "calculator"
 version = "0.1.0"
 authors = ["Niko Matsakis &lt;niko@alum.mit.edu&gt;"]
-edition = "2021"
+edition = "2024"
 
 [build-dependencies] # &lt;-- We added this and everything after!
-lalrpop = "0.22.1"
+lalrpop = "0.23.0"
 
 [dependencies]
 lalrpop-util = { version = "0.21.0", features = ["lexer", "unicode"] }
@@ -573,10 +606,23 @@ give you the idea:</p>
 <tr><td><code>&lt;p:A&gt; &lt;q:B&gt; =&gt; bar(&lt;&gt;)</code></td><td><code>&lt;p:A&gt; &lt;q:B&gt; =&gt; bar(p, q)</code></td></tr>
 <tr><td><code>&lt;p:A&gt; B =&gt; Foo {&lt;&gt;}</code></td><td><code>&lt;p:A&gt; B =&gt; Foo {p:p}</code></td></tr>
 <tr><td><code>&lt;p:A&gt; &lt;q:B&gt; =&gt; Foo {&lt;&gt;}</code></td><td><code>&lt;p:A&gt; &lt;q:B&gt; =&gt; Foo {p:p, q:q}</code></td></tr>
+<tr><td><code>&lt;A&gt; &lt;B&gt; =&gt; format!("&lt;&gt; &lt;&gt;")</code></td><td><code>&lt;a:A&gt; &lt;b:B&gt; =&gt; format!("&lt;a&gt; &lt;b&gt;")</code></td></tr>
+<tr><td><code>&lt;p:A&gt; &lt;q:B&gt; =&gt; format!("&lt;&gt; &lt;&gt;")</code></td><td><code>&lt;p:A&gt; &lt;q:B&gt; =&gt; format!("&lt;p&gt; &lt;q&gt;")</code></td></tr>
 </tbody></table>
 </div>
 <p>The <code>&lt;&gt;</code> expressions also works with struct constructors (like <code>Foo {...}</code> in examples above). This works out well if the names of your
 parsed values match the names of your struct fields.</p>
+<p>However, <code>&lt;&gt;</code> may be confusing if you're dealing with complicated
+tuples. In that case, LALRPOP provides a pattern matching to unwrap
+the tuple. For example,</p>
+<pre><code class="language-lalrpop">Foo = { A B }
+Bar = { C Foo }
+pub FooBar: String = {
+    &lt;(a, b):Foo&gt; =&gt; format!("{a}{b}"),
+    &lt;(c, (a, b)):Bar&gt; =&gt; format!("{c}{a}{b}")
+}
+</code></pre>
+<p>Note that LALRPOP's tuple parameters must have at least two elements.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="handling-full-expressions"><a class="header" href="#handling-full-expressions">Handling full expressions</a></h1>
 <p>Now we are ready to extend our calculator to cover the full range of
 arithmetic expressions (well, at least the ones you learned in
@@ -1652,7 +1698,9 @@ where each item in the stream has the following structure:</p>
 <pre><code class="language-lalrpop">pub type Spanned&lt;Tok, Loc, Error&gt; = Result&lt;(Loc, Tok, Loc), Error&gt;;
 </code></pre>
 <p><code>Loc</code> is typically just a <code>usize</code>, representing a byte offset into the input
-string. Each token is accompanied by two of them, marking the start and end
+string; it must implement <code>Debug</code>, <code>Clone</code>, and <code>Default</code>, where its <code>Default</code>
+value represents the initial parsing location.
+Each token is accompanied by two of them, marking the start and end
 positions where it was found. <code>Error</code> can be pretty much anything you choose.
 And of course <code>Tok</code> is the meat of the stream, defining what possible values
 the tokens themselves can have. Following the conventions of Rust iterators,
@@ -1889,23 +1937,17 @@ character, stores the beginning then continues to the next operator and sends
 the symbol it just parsed.</p>
 <h2 id="the-parser"><a class="header" href="#the-parser">The parser</a></h2>
 <p>We can then take a look at the corresponding parser with a new grammar:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>Term: Box&lt;ExprSymbol&lt;'input&gt;&gt; = {
+<pre><code class="language-lalrpop">Term: Box&lt;ExprSymbol&lt;'input&gt;&gt; = {
     "num" =&gt; Box::new(ExprSymbol::NumSymbol(&lt;&gt;)),
     "(" &lt;Expr&gt; ")"
 };
-<span class="boring">}</span></code></pre></pre>
+</code></pre>
 <p>We need to pass the input to the parser so that the input's lifetime is known
 to the borrow checker when compiling the generated parser.</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>grammar&lt;'input&gt;(input: &amp;'input str);
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-lalrpop">grammar&lt;'input&gt;(input: &amp;'input str);
+</code></pre>
 <p>Then we just need to define the tokens the same as before :</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>extern {
+<pre><code class="language-lalrpop">extern {
     type Location = usize;
     type Error = ();
 
@@ -1917,7 +1959,7 @@ to the borrow checker when compiling the generated parser.</p>
         ")" =&gt; Tok::ParenClose,
     }
 }
-<span class="boring">}</span></code></pre></pre>
+</code></pre>
 <h2 id="calling-the-parser"><a class="header" href="#calling-the-parser">Calling the parser</a></h2>
 <p>We can finally run the parser we built:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -2142,9 +2184,7 @@ extern {
 Lexer. We can then use those names (<code>"identifier"</code>, <code>"var"</code>, ...) in our grammar
 rules to reference the desired token.</p>
 <p>Finally, we can build our rules:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub Script: Vec&lt;ast::Statement&gt; = {
+<pre><code class="language-lalrpop">pub Script: Vec&lt;ast::Statement&gt; = {
   &lt;stmts:Statement*&gt; =&gt; stmts
 }
 
@@ -2203,7 +2243,7 @@ pub Term: Box&lt;ast::Expression&gt; = {
   },
   "(" &lt;Expression&gt; ")",
 }
-<span class="boring">}</span></code></pre></pre>
+</code></pre>
 <p>Our grammar is now complete.</p>
 <h2 id="running-your-parser"><a class="header" href="#running-your-parser">Running your parser</a></h2>
 <p>The last step is to run our parser:</p>
@@ -2477,8 +2517,8 @@ this list, please add yourself!</p>
         </script>
 
         <script src="ace.js"></script>
-        <script src="editor.js"></script>
         <script src="mode-rust.js"></script>
+        <script src="editor.js"></script>
         <script src="theme-dawn.js"></script>
         <script src="theme-tomorrow_night.js"></script>
 
@@ -2499,6 +2539,7 @@ this list, please add yourself!</p>
             });
         });
         </script>
+
 
     </div>
     </body>
