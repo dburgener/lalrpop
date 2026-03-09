@@ -94,3 +94,15 @@ jobs:
       - name: Run feature powerset check
         # test with minimal amount of features plus a few extra on regex/regex-syntax
         run: cargo hack test --workspace --feature-powerset --exclude-features pico-args,default --optional-deps
+  cross:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+      - name: Install cross
+        run: cargo install cross
+      - name: Run cross
+        run: cross test --target x86_64-pc-windows-gnu
