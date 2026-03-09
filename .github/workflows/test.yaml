@@ -98,6 +98,8 @@ jobs:
     runs-on: ${{matrix.build-os}}-latest
     strategy:
       matrix:
+        build-os: []
+        target-os: []
         include:
           - build-os: ubuntu
             target-os: x86_64-pc-windows-gnu
