@@ -95,16 +95,7 @@ jobs:
         # test with minimal amount of features plus a few extra on regex/regex-syntax
         run: cargo hack test --workspace --feature-powerset --exclude-features pico-args,default --optional-deps
   cross:
-    runs-on: ${{matrix.build-os}}-latest
-    strategy:
-      matrix:
-        build-os: []
-        target-os: []
-        include:
-          - build-os: ubuntu
-            target-os: x86_64-pc-windows-gnu
-          - build-os: windows
-            target-os: x86_64-unknown-linux-gnu
+    runs-on: ubuntu-latest
     needs: lint
     steps:
       - uses: actions/checkout@v4
@@ -114,4 +105,4 @@ jobs:
       - name: Install cross
         run: cargo install cross
       - name: Run cross
-        run: cross test --target ${{matrix.target-os}}
+        run: cross test --target x86_64-pc-windows-gnu
