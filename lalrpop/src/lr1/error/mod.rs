@@ -3,7 +3,7 @@
 use crate::collections::{Set, set};
 use crate::grammar::repr::*;
 use crate::lr1::core::*;
-use crate::lr1::example::{Example, ExampleStyles, ExampleSymbol};
+use crate::lr1::example::{Example, ExampleStyles, ExampleSymbol, Reduction};
 use crate::lr1::first::FirstSets;
 use crate::lr1::lookahead::{Token, TokenSet};
 use crate::lr1::trace::Tracer;
@@ -804,19 +804,105 @@ impl<'cx, 'grammar> ErrorReportingCx<'cx, 'grammar> {
             .unwrap_or(false)
     }
 
+    /// Generate a synthetic example from a conflicting item when normal trace-based
+    /// enumeration has failed (typically at grammar start states where there's no
+    /// predecessor context to trace back to).
+    ///
+    /// For a reduce item (complete: index == production.symbols.len()),
+    /// shows what happens when we reduce the prefix to the nonterminal.
+    ///
+    /// For a shift item (incomplete), shows what the symbols would be if we
+    /// shift the lookahead.
+    fn synthetic_example_from_item(
+        &self,
+        item: Lr0Item<'grammar>,
+        lookahead: Token,
+    ) -> Option<Example> {
+        // Extract the symbols that came before the cursor (the "prefix")
+        let prefix_symbols: Vec<ExampleSymbol> = item.production.symbols[..item.index]
+            .iter()
+            .map(|s| ExampleSymbol::Symbol(s.clone()))
+            .collect();
+
+        // The cursor position is where the lookahead appears in our symbol sequence
+        let cursor = prefix_symbols.len();
+        let mut symbols = prefix_symbols;
+
+        // Add a representation of the lookahead as the symbol at the cursor
+        match lookahead {
+            Token::Terminal(term) => {
+                symbols.push(ExampleSymbol::Symbol(Symbol::Terminal(term.clone())));
+            }
+            Token::Error => {
+                symbols.push(ExampleSymbol::Epsilon);
+            }
+            Token::Eof => {
+                symbols.push(ExampleSymbol::Epsilon);
+            }
+        }
+
+        // Determine what reductions apply:
+        // If this is a complete item (index == len of symbols), it's a reduce item,
+        // so we show that the prefix reduces to the nonterminal
+        let reductions = if item.index == item.production.symbols.len() && cursor > 0 {
+            vec![Reduction {
+                start: 0,
+                end: cursor,
+                nonterminal: item.production.nonterminal.clone(),
+            }]
+        } else {
+            // For shift items or empty reductions, we don't show reductions in the basic example
+            vec![]
+        };
+
+        Some(Example {
+            symbols,
+            cursor,
+            reductions,
+        })
+    }
+
+    /// Helper method to generate synthetic examples as a fallback when trace-based
+    /// example enumeration produces no results. This is a wrapper around
+    /// synthetic_example_from_item that handles the conversion to a Vec.
+    fn synthetic_examples_for_conflict(
+        &self,
+        item: Lr0Item<'grammar>,
+        lookahead: Token,
+    ) -> Vec<Example> {
+        self.synthetic_example_from_item(item, lookahead)
+            .into_iter()
+            .collect()
+    }
+
     fn shift_examples(&self, conflict: &TokenConflict<'grammar>) -> Vec<Example> {
         log!(Tls::session(), Verbose, "Gathering shift examples");
         let state = &self.states[conflict.state.0];
         let conflicting_items = self.conflicting_shift_items(state, conflict);
-        conflicting_items
-            .into_iter()
-            .flat_map(|item| {
+        let mut examples: Vec<Example> = conflicting_items
+            .iter()
+            .flat_map(|&item| {
                 let tracer = Tracer::new(&self.first_sets, self.states);
                 let shift_trace = tracer.backtrace_shift(conflict.state, item);
                 let local_examples: Vec<Example> = shift_trace.lr0_examples(item).collect();
                 local_examples
             })
-            .collect()
+            .collect();
+
+        // FALLBACK: If we got no examples through normal trace-based enumeration
+        // (which can happen at grammar start states), try generating synthetic
+        // examples directly from the items.
+        if examples.is_empty() {
+            log!(Tls::session(), Verbose, "No trace examples found, attempting synthetic generation");
+            for item in conflicting_items.into_iter() {
+                examples.extend(self.synthetic_examples_for_conflict(
+                    item,
+                    conflict.lookahead.clone(),
+                ));
+            }
+        }
+
+        examples
     }
 
     fn reduce_examples(
@@ -829,11 +915,26 @@ impl<'cx, 'grammar> ErrorReportingCx<'cx, 'grammar> {
         let item = Item {
             production,
             index: production.symbols.len(),
-            lookahead: TokenSet::from(lookahead),
+            lookahead: TokenSet::from(lookahead.clone()),
         };
         let tracer = Tracer::new(&self.first_sets, self.states);
         let reduce_trace = tracer.backtrace_reduce(state, item.to_lr0());
-        reduce_trace.lr1_examples(&self.first_sets, &item).collect()
+        let mut examples: Vec<Example> = reduce_trace
+            .lr1_examples(&self.first_sets, &item)
+            .collect();
+
+        // FALLBACK: If we got no examples through normal trace-based enumeration
+        // (which can happen at grammar start states), try generating a synthetic
+        // example directly from the reduce item.
+        if examples.is_empty() {
+            log!(Tls::session(), Verbose, "No trace examples found, attempting synthetic generation");
+            examples.extend(self.synthetic_examples_for_conflict(
+                item.to_lr0(),
+                lookahead,
+            ));
+        }
+
+        examples
     }
 
     fn conflicting_shift_items(
